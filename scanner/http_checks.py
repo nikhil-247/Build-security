@@ -28,7 +28,7 @@ def inspect_headers(response: requests.Response) -> list[Finding]:
                 cwe="CWE-693",
             ))
 
-    if urlparse(response.url).scheme == "https" and "strict-transport-security" not in headers:
+    if urlparse(str(response.url)).scheme == "https" and "strict-transport-security" not in headers:
         findings.append(Finding(
             title="Missing HSTS",
             category="Secure communication",
@@ -65,7 +65,7 @@ def inspect_cookies(response: requests.Response) -> list[Finding]:
         pair = cookie.split(";", 1)[0].strip()
         name = pair.split("=", 1)[0].strip() if "=" in pair else "unknown"
         lowered = cookie.lower()
-        if "secure" not in lowered and urlparse(response.url).scheme == "https":
+        if "secure" not in lowered and urlparse(str(response.url)).scheme == "https":
             findings.append(Finding(
                 title=f"Session cookie missing Secure flag: {name}",
                 category="Authentication and session management",
