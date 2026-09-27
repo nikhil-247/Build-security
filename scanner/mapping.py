@@ -34,6 +34,27 @@ OWASP_API_BY_CWE = {
 }
 
 POC_BY_CWE = {
+    "CWE-693": {
+        "id": "client-header-lab",
+        "mode": "local-lab",
+        "title": "Client-side security header observation",
+        "steps": ["Start the included vulnerable lab.", "Send GET /.", "Inspect the response headers.", "Record the absence of the security header named by the finding."],
+        "expected": "The local lab intentionally omits several browser security headers.",
+    },
+    "CWE-319": {
+        "id": "transport-lab",
+        "mode": "local-lab",
+        "title": "Transport policy observation",
+        "steps": ["Start the included vulnerable lab over its local HTTP endpoint.", "Observe the URL scheme and response.", "Do not send credentials or sensitive data to the lab.", "Use the observation only to demonstrate why HTTPS/HSTS is required in a deployment."],
+        "expected": "The local lab runs over HTTP, providing a controlled demonstration of the transport-policy gap.",
+    },
+    "CWE-200": {
+        "id": "fingerprint-lab",
+        "mode": "local-lab",
+        "title": "Information disclosure header observation",
+        "steps": ["Start the included vulnerable lab.", "Send GET /.", "Inspect X-Powered-By in the response.", "Record the implementation-identifying value without probing further."],
+        "expected": "The local lab intentionally exposes X-Powered-By.",
+    },
     "CWE-942": {
         "id": "cors-wildcard-lab",
         "mode": "local-lab",
