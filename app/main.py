@@ -11,8 +11,11 @@ from pydantic import BaseModel, Field
 
 from scanner.authz import compare_authorized_identities
 from scanner.http_checks import assess_target
+from scanner.mapping import enrich_findings
 from scanner.models import AssessmentResult
+from scanner.poc import run_local_poc
 from scanner.report import save_report, utc_now
+from scanner.world_monitor import attack_surface_summary, profile_for_target
 
 app = FastAPI(
     title="Build Security | World Monitor Security Assessment",
@@ -86,6 +89,7 @@ def health():
 def info():
     return {
         "name": "Build Security",
+        "assessment_profile": profile_for_target("https://www.worldmonitor.app"),
         "subtitle": "World Monitor Security Assessment",
         "sih": "Smart India Hackathon 2026",
         "problem_statement": "26163",
@@ -133,6 +137,7 @@ def assess(request: AssessRequest):
         )
         checks.append("authorized two-identity GET differential check")
 
+    findings = enrich_findings(findings)
     result = AssessmentResult(
         target=request.target,
         started_at=started,
@@ -140,6 +145,7 @@ def assess(request: AssessRequest):
         findings=findings,
         checks_run=checks,
         notes=notes,
+        attack_surface=attack_surface_summary(findings),
     )
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -159,6 +165,19 @@ def assess(request: AssessRequest):
         },
     }
 
+
+@app.get("/api/world-monitor/profile")
+def world_monitor_profile():
+    return profile_for_target("https://www.worldmonitor.app")
+
+@app.post("/api/poc/{poc_id}")
+def run_poc(poc_id: str, target: str = "http://127.0.0.1:8001"):
+    try:
+        return run_local_poc(poc_id, target)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+    except Exception as exc:
+        raise HTTPException(502, f"Controlled PoC failed: {exc}")
 
 @app.get("/api/report/{filename}")
 def get_report(filename: str):
