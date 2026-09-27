@@ -45,13 +45,21 @@ def _summary(result: AssessmentResult) -> dict:
         counts[finding.severity] = counts.get(finding.severity, 0) + 1
         categories[finding.category] = categories.get(finding.category, 0) + 1
 
+    unique = {}
+    for finding in result.findings:
+        key = (finding.title, finding.severity)
+        unique[key] = finding
+    unique_counts = {severity: 0 for severity in counts}
+    for _, finding in unique.items():
+        unique_counts[finding.severity] += 1
+
     penalty = (
-        counts["Critical"] * 30
-        + counts["High"] * 18
-        + counts["Medium"] * 8
-        + counts["Low"] * 3
+        unique_counts["Critical"] * 35
+        + unique_counts["High"] * 20
+        + unique_counts["Medium"] * 9
+        + unique_counts["Low"] * 3
     )
-    score = max(0, min(100, 100 - penalty))
+    score = max(5, min(100, 100 - penalty))
     label = "Strong" if score >= 85 else "Watch" if score >= 65 else "At Risk" if score >= 40 else "Critical"
     return {
         "score": score,
