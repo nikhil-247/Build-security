@@ -15,6 +15,13 @@ The dashboard deliberately separates machine-generated **signals** from confirme
 
 ## Core capabilities
 
+- **World Monitor assessment profile** mapped to the public Web/PWA, authentication, REST API, MCP, CLI/SDK and data-service surfaces.
+- **PS 26163 control mapping** across authentication/session, authorization, input/data handling, API security, client-side controls, secure communication and privacy.
+- **OWASP mapping** using OWASP Top 10:2025 for web risks and OWASP API Security Top 10:2023 for API-specific risks.
+- **CVSS-style worksheet** with AV/AC/AT/PR/UI and impact metrics plus a machine-readable vector. It is explicitly labeled as a transparent project metric, not an official FIRST CVSS score.
+- **Attack-surface visualization** showing mapped World Monitor entry points and finding density.
+- **Controlled local PoCs** for header, transport, cookie, CORS and authorization observations. Live-target PoCs are intentionally not automated.
+- **Evidence-ready reporting** with vulnerability IDs, business-facing scope, OWASP mapping, risk worksheet, evidence, PoC steps, remediation and verification.
 - Security headers: CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, clickjacking protection signals.
 - Authentication and session hygiene: Secure, HttpOnly, SameSite cookie signals.
 - API security: CORS wildcard and origin-reflection review on configured GET endpoints.
@@ -183,3 +190,50 @@ Build-security/
 ---
 
 **Build Security · Team project for Smart India Hackathon 2026 · PS 26163**
+
+
+## World Monitor-specific assessment layer
+
+The current profile models the public World Monitor architecture documented by the project: `worldmonitor.app` for the web/MCP surface, `api.worldmonitor.app` for REST, and the documented CLI/SDK clients. This is a **reference attack surface**, not a claim that each surface is vulnerable or even in scope for your particular authorization.
+
+The dashboard maps findings into:
+
+| Assessment layer | What Build Security records |
+|---|---|
+| PS 26163 | Exact scope bucket for the finding |
+| OWASP Web | OWASP Top 10:2025 category |
+| OWASP API | API Security Top 10:2023 category when relevant |
+| CWE | Weakness identifier |
+| CVSS-style | Transparent metrics, score and vector |
+| Attack surface | Web / Auth / REST / MCP / Client / Data |
+| PoC | Safe reproduction path, restricted to local lab |
+| Evidence | Concrete observed response/request facts |
+| Verification | How to confirm the remediation |
+
+### Controlled PoC policy
+
+The PoC endpoint only accepts `localhost` / `127.0.0.1`. This keeps the demonstration reproducible for judges without turning the UI into a generic exploit runner.
+
+### Report contents
+
+The generated HTML evidence pack contains:
+
+1. Executive snapshot
+2. Finding inventory
+3. World Monitor attack-surface map
+4. PS 26163 scope mapping
+5. OWASP Web/API mapping
+6. CWE and CVSS-style vector
+7. Evidence
+8. Controlled PoC steps
+9. Business/technical remediation guidance
+10. Verification path
+
+## References
+
+- World Monitor source: https://github.com/koala73/worldmonitor
+- World Monitor developer portal: https://github.com/koala73/worldmonitor/blob/main/public/developers.md
+- OWASP Top 10:2025: https://top10.owasp.org/2025/
+- OWASP API Security Top 10:2023: https://api-security.owasp.org/editions/2023/en/0x11-t10/
+- FIRST CVSS v4.0: https://www.first.org/cvss/v4.0/
+- FIRST CVSS v4.0 calculator: https://www.first.org/cvss/calculator/v4-0
