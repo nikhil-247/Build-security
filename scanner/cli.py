@@ -1,6 +1,8 @@
 from __future__ import annotations
 import argparse
+from .mapping import enrich_findings
 from .models import AssessmentResult
+from .world_monitor import attack_surface_summary
 from .http_checks import assess_target
 from .authz import compare_authorized_identities
 from .report import save_report, utc_now
@@ -40,7 +42,8 @@ def main():
         findings.extend(compare_authorized_identities(args.target, args.endpoint, args.auth_a, args.auth_b))
         checks.append("authorized two-identity GET differential check")
 
-    result = AssessmentResult(target=args.target, started_at=started, finished_at=utc_now(), findings=findings, checks_run=checks, notes=notes)
+    findings = enrich_findings(findings)
+    result = AssessmentResult(target=args.target, started_at=started, finished_at=utc_now(), findings=findings, checks_run=checks, notes=notes, attack_surface=attack_surface_summary(findings))
     json_path, html_path = save_report(result, args.output)
     print(f"JSON report: {json_path}")
     print(f"HTML report: {html_path}")
